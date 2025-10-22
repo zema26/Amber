@@ -1,4 +1,9 @@
-! Program Euclidean! Finds the greatest common divisor of two integers.{module} Euclidean! function with type int{fun} int a, int b -> Euclid int{while} b != 0
+! Program Euclidean! Finds the greatest common divisor of two integers.
+
+{module} Euclidean
+
+{fun} int a, int b -> Euclid int ! function with type int
+{while} b != 0
   {if} a > b
     a - b -> a
   {else}
@@ -8,7 +13,13 @@
 {/while}
 
 {return} a {/return}
-{/fun}! main function{fun} string args[] -> main intint a, b! combined input and output and function call
-! The program will prompt you to enter two numbers.
+{/fun}
+
+! main function
+{fun} string args[] -> main int
+int a, b   ! The program will prompt you to enter two numbers
 in -> a, b -> Euclid -> out
-{/fun}{/module}
+! combined input and output and function call in one line
+{/fun}
+
+{/module}
