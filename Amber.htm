@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amber Language & Euclidean Algorithm Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Calm Harmony (Cream, Dark Slate, Muted Teal) -->
+    <!-- Application Structure Plan: The SPA is designed as a narrative, educational journey in four sections. 1) A brief introduction to the language's philosophy. 2) An interactive breakdown of the three core syntax features, allowing users to learn concepts individually. 3) An interactive code explorer for the full Euclidean program, connecting the syntax rules to a complete example. 4) A live algorithm visualizer where users can input numbers and see the code execute step-by-step. This progressive disclosure structure was chosen because it's the most effective way to teach a new programming concept: start with the rules, show an example, and then demonstrate it live. It prioritizes understanding and engagement over a simple static display. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Amber syntax rules -> Goal: Inform/Organize -> Viz/Presentation: Interactive HTML code blocks -> Interaction: JS-powered tooltips on hover over syntax elements -> Justification: Allows users to self-explore and learn the syntax rules at their own pace.
+        - Report Info: Euclidean algorithm logic -> Goal: Change/Inform -> Viz/Presentation: Custom algorithm visualizer using dynamic HTML divs and text blocks -> Interaction: User inputs numbers, clicks 'run', and sees a step-by-step animated execution log paired with highlighted code lines. -> Justification: This is far more effective for understanding an algorithm's flow than a static code block or a data chart. It directly visualizes the state changes (variables a and b) over time.
+        - Library/Method: Vanilla JS for all interactions and logic. Chart.js is not used as there is no data to plot; this is an algorithm state visualizer, for which custom HTML elements are superior. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Source+Code+Pro:wght@400;500&display=swap');
+        .code {
+            font-family: 'Source Code Pro', monospace;
+        }
+        .tooltip {
+            display: none;
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+        .has-tooltip:hover .tooltip {
+            display: block;
+        }
+        .highlight-step {
+            transition: background-color 0.3s ease-in-out;
+            background-color: #A7F3D0; /* A light green highlight */
+        }
+        .bg-cream { background-color: #FDFBF6; }
+        .text-slate { color: #334155; }
+        .accent-teal { color: #14B8A6; }
+        .bg-teal-500 { background-color: #14B8A6; }
+        .hover\:bg-teal-600:hover { background-color: #0D9488; }
+        .border-teal-500 { border-color: #14B8A6; }
+        .ring-teal-500:focus { ring-color: #14B8A6; }
+    </style>
+</head>
+<body class="bg-cream text-slate antialiased">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-slate mb-2">Amber Language Explorer</h1>
+            <p class="text-lg md:text-xl text-slate/80">An interactive look at a language designed for a natural flow.</p>
+        </header>
+
+        <main>
+            <!-- Section 1: Introduction -->
+            <section id="intro" class="mb-16">
+                <h2 class="text-3xl font-bold mb-4 border-b-2 border-teal-500/50 pb-2">What is Amber?</h2>
+                <p class="text-lg leading-relaxed">Amber is a conceptual programming language syntax designed to make code read more naturally, from left to right. It introduces a few key changes to common programming syntax, drawing inspiration from the flexibility of markup languages while maintaining the rigor of a traditional language. This explorer will walk you through its core concepts and visualize how they work in a real algorithm.</p>
+            </section>
+            
+            <!-- Section 2: Core Concepts -->
+            <section id="concepts" class="mb-16">
+                <h2 class="text-3xl font-bold mb-8 text-center">Core Syntax Concepts</h2>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Concept 1: Reversed Assignment -->
+                    <div class="bg-white/60 p-6 rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300">
+                        <h3 class="text-xl font-bold mb-3">1. Reversed Assignment</h3>
+                        <p class="mb-4">Assignments flow from left to right using a `->` operator. This mimics how we might describe a calculation naturally: "take 'a minus b' and put it into 'a'".</p>
+                        <div class="code bg-slate-100 p-4 rounded-lg text-sm">
+                            <span class="has-tooltip relative">a - b
+                                <span class="tooltip w-48 bg-slate-800 text-white text-xs rounded py-1 px-2">The expression to be evaluated.</span>
+                            </span>
+                            <span class="has-tooltip relative font-bold accent-teal"> -> 
+                                <span class="tooltip w-48 bg-slate-800 text-white text-xs rounded py-1 px-2">The assignment operator.</span>
+                            </span>
+                            <span class="has-tooltip relative"> a
+                                <span class="tooltip w-48 bg-slate-800 text-white text-xs rounded py-1 px-2">The target variable.</span>
+                            </span>
+                        </div>
+                    </div>
+                    <!-- Concept 2: Tagged Keywords -->
+                    <div class="bg-white/60 p-6 rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300">
+                        <h3 class="text-xl font-bold mb-3">2. Tagged Keywords</h3>
+                        <p class="mb-4">Control flow keywords are enclosed in `{}` tags, similar to HTML or XML. This clearly defines the start and end of a block, making code structure explicit and easy to parse.</p>
+                        <div class="code bg-slate-100 p-4 rounded-lg text-sm">
+                            <div><span class="has-tooltip relative font-bold accent-teal">{while}</span> b != 0</div>
+                            <div class="pl-4">...</div>
+                            <div><span class="has-tooltip relative font-bold accent-teal">{/while}</span></div>
+                        </div>
+                    </div>
+                    <!-- Concept 3: Reversed Function Declaration -->
+                    <div class="bg-white/60 p-6 rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300">
+                        <h3 class="text-xl font-bold mb-3">3. Reversed Functions</h3>
+                        <p class="mb-4">Function declarations also follow the left-to-right pattern: parameters come first, followed by `->`, the function name, and its return type. This creates a consistent flow.</p>
+                        <div class="code bg-slate-100 p-4 rounded-lg text-sm">
+                            <span class="has-tooltip relative font-bold accent-teal">{fun}</span> int a, int b <span class="font-bold accent-teal">-></span> Euclid int
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 3: Code Explorer -->
+            <section id="explorer" class="mb-16">
+                <h2 class="text-3xl font-bold mb-4 border-b-2 border-teal-500/50 pb-2">Deconstructing the Euclidean Algorithm</h2>
+                <p class="text-lg leading-relaxed mb-6">Below is the full source code for a program that finds the greatest common divisor (GCD) of two numbers using the Euclidean algorithm, written in Amber. Hover over any line of the `Euclid` function to see an explanation of what it does and how it uses the Amber syntax.</p>
+                <div class="bg-white/60 p-6 rounded-xl shadow-lg">
+                    <div class="grid md:grid-cols-2 gap-6 items-start">
+                        <pre class="code text-sm bg-slate-800 text-white p-4 rounded-lg overflow-x-auto"><code id="code-display" class="whitespace-pre-wrap">{module} Euclidean
+
+  {fun} int a, int b -> Euclid int
+  
+    <span class="code-line" data-line="1">{while} b != 0</span>
+    <span class="code-line" data-line="2">  {if} a > b</span>
+    <span class="code-line" data-line="3">    a - b -> a</span>
+    <span class="code-line" data-line="4">  {else}</span>
+    <span class="code-line" data-line="5">    b - a -> b</span>
+    <span class="code-line" data-line="6">  {/else}</span>
+    <span class="code-line" data-line="7">  {/if}</span>
+    <span class="code-line" data-line="8">{/while}</span>
+
+    <span class="code-line" data-line="9">{return} a {/return}</span>
+
+  {/fun}
+
+{/module}</code></pre>
+                        <div id="code-explanation" class="bg-slate-100 p-4 rounded-lg h-full min-h-[200px] flex items-center justify-center transition-all duration-300">
+                           <p class="text-slate/70 text-center">Hover over a line in the `Euclid` function to learn more.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Algorithm Visualizer -->
+            <section id="visualizer">
+                <h2 class="text-3xl font-bold mb-4 border-b-2 border-teal-500/50 pb-2">Algorithm Visualizer</h2>
+                <p class="text-lg leading-relaxed mb-6">Enter two positive integers to see the Euclidean algorithm in action. The visualizer will walk through the Amber code step-by-step, showing how the values of 'a' and 'b' change until the greatest common divisor is found.</p>
+                
+                <div class="bg-white/60 p-6 rounded-xl shadow-lg">
+                    <div class="flex flex-wrap gap-4 mb-6">
+                        <input id="input-a" type="number" placeholder="Enter number a (e.g., 54)" class="w-full md:w-auto flex-grow p-3 border-2 border-slate-300 rounded-lg focus:ring-2 ring-teal-500 focus:outline-none transition">
+                        <input id="input-b" type="number" placeholder="Enter number b (e.g., 24)" class="w-full md:w-auto flex-grow p-3 border-2 border-slate-300 rounded-lg focus:ring-2 ring-teal-500 focus:outline-none transition">
+                        <button id="run-btn" class="w-full md:w-auto flex-grow bg-teal-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-teal-600 transition-colors duration-300 shadow">Run Algorithm</button>
+                    </div>
+
+                    <div id="visualizer-output" class="hidden">
+                        <div class="grid md:grid-cols-2 gap-6 items-start">
+                            <div>
+                                <h3 class="font-bold text-xl mb-3">Execution Steps</h3>
+                                <div id="steps-log" class="code bg-slate-800 text-white p-4 rounded-lg h-80 overflow-y-auto text-sm space-y-2"></div>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-xl mb-3">Code Execution</h3>
+                                <pre class="code text-sm bg-slate-100 p-4 rounded-lg"><code id="visualizer-code-display">{while} b != 0
+  {if} a > b
+    a - b -> a
+  {else}
+    b - a -> b
+  {/else}
+  {/if}
+{/while}
+
+{return} a {/return}</code></pre>
+                            </div>
+                        </div>
+
+                         <div class="mt-6 text-center">
+                            <h3 class="font-bold text-xl">Result</h3>
+                            <p id="result-text" class="text-2xl font-bold accent-teal mt-2"></p>
+                        </div>
+                    </div>
+                     <div id="visualizer-error" class="hidden text-center p-4 bg-red-100 text-red-700 rounded-lg"></div>
+                </div>
+            </section>
+        </main>
+        
+        <footer class="text-center mt-16 pt-8 border-t border-slate-200">
+            <p class="text-slate/60">An interactive report generated from source material.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const explanations = {
+                1: "<strong>{while} b != 0</strong>: This is the main loop. It continues as long as 'b' is not equal to zero. The tagged keyword `{while}` clearly marks the beginning of the loop block.",
+                2: "<strong>{if} a > b</strong>: Inside the loop, we first check if 'a' is greater than 'b'. The `{if}` tag starts a conditional block.",
+                3: "<strong>a - b -> a</strong>: If 'a' is greater, we subtract 'b' from 'a' and assign the result back to 'a'. This uses Amber's left-to-right assignment.",
+                4: "<strong>{else}</strong>: If the condition 'a > b' is false, the code in the `{else}` block is executed.",
+                5: "<strong>b - a -> b</strong>: Here, 'b' must be greater than or equal to 'a'. We subtract 'a' from 'b' and assign the result back to 'b'.",
+                6: "<strong>{/else}</strong>: The `{/else}` tag closes the alternative conditional block.",
+                7: "<strong>{/if}</strong>: The `{/if}` tag closes the entire conditional statement.",
+                8: "<strong>{/while}</strong>: This tag marks the end of the while loop. The program will now jump back to the `{while}` condition to check it again.",
+                9: "<strong>{return} a {/return}</strong>: Once the loop finishes (meaning 'b' is 0), the value of 'a' is the GCD. The `{return}` statement returns this value."
+            };
+
+            const codeLines = document.querySelectorAll('.code-line');
+            const explanationBox = document.getElementById('code-explanation');
+            const initialExplanation = explanationBox.innerHTML;
+
+            codeLines.forEach(line => {
+                line.addEventListener('mouseover', () => {
+                    const lineNum = line.dataset.line;
+                    explanationBox.innerHTML = explanations[lineNum] || initialExplanation;
+                    explanationBox.classList.remove('items-center', 'justify-center');
+                });
+                line.addEventListener('mouseout', () => {
+                    explanationBox.innerHTML = initialExplanation;
+                    explanationBox.classList.add('items-center', 'justify-center');
+                });
+            });
+
+            // Visualizer Logic
+            const runBtn = document.getElementById('run-btn');
+            const inputA = document.getElementById('input-a');
+            const inputB = document.getElementById('input-b');
+            const visualizerOutput = document.getElementById('visualizer-output');
+            const stepsLog = document.getElementById('steps-log');
+            const resultText = document.getElementById('result-text');
+            const visualizerCode = document.getElementById('visualizer-code-display');
+            const visualizerError = document.getElementById('visualizer-error');
+
+            const highlightLine = (lineNumber) => {
+                const lines = visualizerCode.innerHTML.split('\n');
+                const newLines = lines.map((line, index) => {
+                    return `<span class="block ${index + 1 === lineNumber ? 'highlight-step' : ''}">${line}</span>`;
+                });
+                visualizerCode.innerHTML = newLines.join('\n');
+            };
+            
+            const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+            runBtn.addEventListener('click', async () => {
+                let a = parseInt(inputA.value);
+                let b = parseInt(inputB.value);
+                
+                visualizerError.classList.add('hidden');
+
+                if (isNaN(a) || isNaN(b) || a <= 0 || b <= 0) {
+                    visualizerError.textContent = "Please enter two positive integers.";
+                    visualizerError.classList.remove('hidden');
+                    visualizerOutput.classList.add('hidden');
+                    return;
+                }
+
+                visualizerOutput.classList.remove('hidden');
+                stepsLog.innerHTML = '';
+                let step = 1;
+                
+                const logStep = (message) => {
+                    stepsLog.innerHTML += `<div><span class="font-bold accent-teal mr-2">Step ${step}:</span>${message}</div>`;
+                    stepsLog.scrollTop = stepsLog.scrollHeight;
+                    step++;
+                };
+
+                logStep(`Initial values: a = ${a}, b = ${b}`);
+                await sleep(500);
+
+                while (b !== 0) {
+                    highlightLine(1);
+                    logStep(`Check loop condition: b (${b}) != 0 is true. Enter loop.`);
+                    await sleep(1000);
+                    
+                    highlightLine(2);
+                    logStep(`Check condition: a (${a}) > b (${b})`);
+                    await sleep(1000);
+
+                    if (a > b) {
+                        highlightLine(3);
+                        const oldA = a;
+                        a = a - b;
+                        logStep(`Condition is true. New a = ${oldA} - ${b} = ${a}`);
+                        await sleep(1000);
+                    } else {
+                        highlightLine(5);
+                         const oldB = b;
+                        b = b - a;
+                        logStep(`Condition is false. New b = ${oldB} - ${a} = ${b}`);
+                        await sleep(1000);
+                    }
+                }
+                
+                highlightLine(1);
+                logStep(`Check loop condition: b (${b}) != 0 is false. Exit loop.`);
+                await sleep(1000);
+
+                highlightLine(10);
+                logStep(`Return value of a, which is ${a}.`);
+                await sleep(500);
+                
+                highlightLine(0); // Clear highlight
+                resultText.textContent = `The GCD is ${a}`;
+            });
+        });
+    </script>
+</body>
+</html>
