@@ -1,0 +1,74 @@
+{module} primes 
+
+        {fun} int n -> Eratosthenes       ! subroutine declaration with no type
+             
+            bool primes [ n ]        ! variable declaration
+
+            int l(0), i(0), index_square(3)         ! proc sift
+
+            int first, last, factor ! proc mark sieve
+
+            {for} k(0)++ < n       ! fill with true, new loop syntax
+
+                true -> primes[k] 
+
+            {/for}   
+                
+         
+            {while} index_square < n         !proc sift
+
+                {if} primes[i]             !proc mark sieve
+
+                    0 + index_square -> first
+                    0 + n  ->  last 
+                    i + i + 3  ->  factor
+                    false  ->  primes[first] 
+
+                    {while} last - first > factor 
+
+                        first + factor  ->  first
+                        false  ->  primes[first]
+
+                    {/while}
+                    
+                {/if}              ! proc mark sieve
+
+                i + 1  ->  i
+                2 * i * (i + 3) + 3  ->  index_square
+
+            {/while}          ! proc sift
+
+            ' 2'  ->  out  ! print out
+
+            {for} i(0)++ < n         ! print out, new loop syntax
+
+                {if} primes[i] 
+
+                    {if} 2 * i + 3 > n 
+                        break
+                    {/if}
+
+                    ' ' 2 * i + 3  ->  out
+                    l + 1  ->  l
+
+                    {if} l % 10 == 0 
+                        '\n'  ->  out
+                    {/if}   
+          
+                {/if}        ! if
+
+            {/for}         ! print out
+
+            '\n number : '  l  ->  out
+
+        {/fun}            ! erato fun
+
+     
+        {fun}  main  int		! main function
+ 
+        1000 -> Eratosthenes           ! subroutine call
+
+        {/fun}
+
+{/module}
+
